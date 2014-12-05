@@ -12,6 +12,7 @@ login = "automation.tc@ukr.net"
 password = "ololobumbum"
 checkin = False
 
+
 class TestLoginPage(unittest.TestCase):
 
     def setUp(self):
@@ -32,12 +33,14 @@ class TestLoginPage(unittest.TestCase):
 
     @pytest.mark.run('first')
     def test_login(self):
-        if self.login_page.login(login, password):
-            checkin = True
+        self.login_page.login(login, password)
+        global checkin
+        checkin = True
         self.assertEqual(self.login_page.login_username().is_displayed(), True, "Login should be successfull")
 
     @pytest.mark.run(after='first')
-    @pytest.mark.skipif(True, checkin)
+    @pytest.mark.skipif("checkin is False")
     def test_logout(self):
+            self.login_page.login(login, password)
             self.login_page.logout_button().click()
             self.assertEqual(self.login_page.login_button().is_displayed(), True, "Logout should be performed correct")
