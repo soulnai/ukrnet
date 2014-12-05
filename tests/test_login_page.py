@@ -1,6 +1,8 @@
+from pageObjects.login_page import LoginPage
+
 __author__ = 'avasilyev2'
 
-from pageObjects import login_page
+from pageObjects.login_page import LoginPage
 import unittest
 import pytest
 from selenium import webdriver
@@ -8,14 +10,14 @@ from selenium.webdriver.common.keys import Keys
 
 login = "automation.tc@ukr.net"
 password = "ololobumbum"
-
+checkin = False
 
 class TestLoginPage(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.get("http://www.ukr.net")
-        self.login_page = login_page.LoginPage(self.driver)
+        self.login_page = LoginPage(self.driver)
 
     def tearDown(self):
         self.driver.quit()
@@ -28,11 +30,14 @@ class TestLoginPage(unittest.TestCase):
         self.login_page.login(login.upper(), password.upper())
         self.assertEqual(self.login_page.error_message().is_displayed(), True, "Should return error-message")
 
+    @pytest.mark.run('first')
     def test_login(self):
-        self.login_page.login(login, password)
+        if self.login_page.login(login, password):
+            checkin = True
         self.assertEqual(self.login_page.login_username().is_displayed(), True, "Login should be successfull")
 
+    @pytest.mark.run(after='first')
+    @pytest.mark.skipif(True, checkin)
     def test_logout(self):
-        if self.login_page.login(login, password):
             self.login_page.logout_button().click()
             self.assertEqual(self.login_page.login_button().is_displayed(), True, "Logout should be performed correct")
