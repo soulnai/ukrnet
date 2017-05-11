@@ -6,10 +6,5 @@ pipeline {
         sh 'echo "test"'
       }
     }
-    stage('errors') {
-      steps {
-        catchError()
-      }
-    }
   }
 }
